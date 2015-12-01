@@ -1,0 +1,256 @@
+<job id="ZTIOSConfig">
+	<script language="VBScript" src="ZTIUtility.vbs"/>
+	<script language="VBScript">
+
+' // ***************************************************************************
+' // 
+' // File:      	ZTIOSConfig.wsf
+' // 
+' // Author:    	David Segura
+' // 
+' // Version:   	20151130
+' // 
+' // Purpose:   	Updates the OS Configuration for Windows Deployments
+' //
+' // Requirements:	Requires Robocopy on the Client OS (Windows XP)
+' // 
+' // ***************************************************************************
+
+' // ***************************************************************************
+' // 
+' // Unattend.xml Configuration (Order varies)
+' //		<RunSynchronousCommand wcm:action="add">
+' //			<Description>OS Config</Description>
+' //			<Order>5</Order>
+' //			<Path>cmd /c C:\_SMSTaskSequence\OSConfig\OSConfig.cmd</Path>
+' //		</RunSynchronousCommand>
+' //
+' // ***************************************************************************
+
+' // ***************************************************************************
+' // 
+' // MDT Configuration and Issues
+' // 	This file should be placed %DeployRoot%\Scripts\ZTIOSConfig.wsf
+' //	A "Run Command Line" step is added in the Task Sequence before Install OS
+' //		Command Line:	cscript %ScriptRoot%\ZTIOSConfig.wsf
+' //		Start In:		%ScriptRoot%
+' //
+' //	OSConfig (ConfigFiles) should exist at %DeployRoot%\Applications\OSConfig
+' // 
+' // ***************************************************************************
+
+' // ***************************************************************************
+' // 
+' // CM Configuration and Issues
+' // 	Package should be created with the following Directory Structure
+' //
+' //	OSConfigPackage
+' //		ZTIOSConfig.wsf	(this file)
+' //		ZTIUtility.vbs		(copy from MDT Package)
+' //		OSConfig			(ConfigFiles Dir)
+' //			OSConfig.vbs
+' //			Windows
+' //			Windows 10
+' //			. . .
+' // 
+' //	Requires Variable ImageBuild
+' //	Requires Variable ImageFlags
+' //
+' // ***************************************************************************
+
+Option Explicit
+RunNewInstance
+
+'//----------------------------------------------------------------------------
+'//  Global Constants
+'//----------------------------------------------------------------------------
+
+'//----------------------------------------------------------------------------
+'//  Main Class
+'//----------------------------------------------------------------------------
+
+Class ZTIOSConfig
+
+	'//----------------------------------------------------------------------------
+	'//  Main routine
+	'//----------------------------------------------------------------------------
+	Function Main
+	
+		Dim ZTIAuthor		: 	ZTIAuthor		=	"Segura"
+		Dim ZTIScript		: 	ZTIScript		=	"ZTIOSConfig.wsf"
+		oLogging.CreateEntry "(" & ZTIAuthor & ") Processing " & ZTIScript, LogTypeInfo
+		
+		'//----------------------------------------------------------------------------
+		'//  Environment Check
+		'//----------------------------------------------------------------------------
+
+		'//----------------------------------------------------------------------------
+		'//  Get the OS Name
+		'//----------------------------------------------------------------------------
+		'Get the friendly name of the Operating System into Environment Variable MyOSName.  This will be one of the following:
+		'5.1	Windows XP
+		'5.2	Windows XP		(x64 Edition)
+		'5.2	Windows Server 2003
+		'6.0	Windows Vista
+		'6.0	Windows Server 2008
+		'6.1	Windows 7
+		'6.1	Windows Server 2008 R2
+		'6.2	Windows 8
+		'6.2	Windows Server 2012
+		'6.3	Windows 8.1
+		'6.3	Windows Server 2012 R2
+		'10.	Windows 10
+		'10.	Windows Server 10
+		GetOSName
+
+		oLogging.CreateEntry "(" & ZTIAuthor & ") Operating System = " & oEnvironment.Item("MyOSName"), LogTypeInfo
+		oLogging.CreateEntry "(" & ZTIAuthor & ") Operating System Full Name = " & oEnvironment.Item("MyOSName") & " " & oEnvironment.Item("ImageProcessor"), LogTypeInfo
+		
+		'//----------------------------------------------------------------------------
+		'//  Get the Script Path
+		'//----------------------------------------------------------------------------
+		Dim sScriptLocation
+		sScriptLocation = oFSO.GetParentFolderName(WScript.ScriptFullName)
+		
+		'//----------------------------------------------------------------------------
+		'//  Find the OSConfig Path
+		'//----------------------------------------------------------------------------
+		'Look in the same directory as the Script first
+		If oFSO.FolderExists(sScriptLocation & "\OSConfig") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & sScriptLocation & "\OSConfig", LogTypeInfo
+			oEnvironment.Item("OSConfig") = sScriptLocation & "\OSConfig"
+			
+		'If we did not find it in the Script Directory, look in Applications\OSConfig
+		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\Applications\OSConfig") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & oEnvironment.Item("DeployRoot") & "\Applications\OSConfig", LogTypeInfo
+			oEnvironment.Item("OSConfig") = oEnvironment.Item("DeployRoot") & "\Applications\OSConfig"
+		
+		'Cound not find the directory, script will exit
+		Else
+			oLogging.CreateEntry "(" & ZTIAuthor & ") Could not locate OSConfig . . . Exiting", LogTypeInfo
+			Main = SUCCESS
+			Exit Function
+		End If
+		
+		
+		'//----------------------------------------------------------------------------
+		'//  Create the Directory _SMSTSMDATAPATH\OSConfig
+		'//----------------------------------------------------------------------------
+		If Not oFSO.FolderExists(oEnvironment.Item("_SMSTSMDATAPATH") & "\OSConfig") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") Creating OSConfig Folder at " & oEnvironment.Item("_SMSTSMDATAPATH") & "\OSConfig", LogTypeInfo
+			oFSO.CreateFolder oEnvironment.Item("_SMSTSMDATAPATH") & "\OSConfig"
+		End If
+		
+		
+		'//----------------------------------------------------------------------------
+		'//  Copy OSConfig.vbs
+		'//----------------------------------------------------------------------------
+		If oFSO.FileExists(oEnvironment.Item("OSConfig") & "\OSConfig.vbs") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") Copying OSConfig.vbs from: " & oEnvironment.Item("OSConfig") & "\OSConfig.vbs", LogTypeInfo
+			oFSO.CopyFile oEnvironment.Item("OSConfig") & "\OSConfig.vbs", oEnvironment.Item("_SMSTSMDATAPATH") & "\OSConfig\", True
+		End If
+		
+		
+		'//----------------------------------------------------------------------------
+		'//  Copy Content for Windows
+		'//----------------------------------------------------------------------------
+		If oFSO.FolderExists(oEnvironment.Item("OSConfig") & "\Windows") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") Copying Windows Content from: "	& oEnvironment.Item("OSConfig") & "\Windows", LogTypeInfo
+			oFSO.CopyFolder oEnvironment.Item("OSConfig") & "\Windows", oEnvironment.Item("_SMSTSMDATAPATH") & "\OSConfig", True
+		End If
+		
+		
+		'//----------------------------------------------------------------------------
+		'//  Copy Content for Operating System
+		'//----------------------------------------------------------------------------
+		If oFSO.FolderExists(oEnvironment.Item("OSConfig") & "\" & oEnvironment.Item("MyOSName")) Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") Copying Windows Content from: "	& oEnvironment.Item("OSConfig") & "\" & oEnvironment.Item("MyOSName"), LogTypeInfo
+			oFSO.CopyFolder oEnvironment.Item("OSConfig") & "\" & oEnvironment.Item("MyOSName"), oEnvironment.Item("_SMSTSMDATAPATH") & "\OSConfig", True
+		End If
+		
+
+		'//----------------------------------------------------------------------------
+		'//  Create the Script
+		'//----------------------------------------------------------------------------
+		'Set Text File
+		Dim sFile
+		sFile = oEnvironment.Item("_SMSTSMDATAPATH") & "\OSConfig\OSConfig.cmd"
+		
+		'Create Text File
+		Dim oFile
+		Set oFile = oFSO.CreateTextFile(sFile, True, False)
+
+		'Build NotePause
+		oFile.WriteLine "@echo off"
+		
+		oFile.WriteLine "echo Copying OSConfig to %WinDir%\OSConfig for Archiving (excluding OSConfig.cmd)"
+		oFile.WriteLine "robocopy %SystemDrive%\_SMSTaskSequence\OSConfig %WinDir%\OSConfig *.* /mir /ndl /xj /r:0 /w:0 /xf OSConfig.cmd"
+		oFile.WriteLine ""
+		
+		oFile.WriteLine "echo Executing OSConfig Settings"
+		oFile.WriteLine "cscript %WinDir%\OSConfig\OSConfig.vbs /OS:""" & oEnvironment.Item("MyOSName") & """"
+		oFile.WriteLine ""
+		
+		oFile.WriteLine "echo Removing OSConfig Staging"
+		oFile.WriteLine "rd %SystemDrive%\_SMSTaskSequence\OSConfig /S /Q"
+		oFile.Close
+		
+		'//----------------------------------------------------------------------------
+		'//  Complete the Script
+		'//----------------------------------------------------------------------------
+		oLogging.CreateEntry "(" & ZTIAuthor & ") " & ZTIScript & " has completed", LogTypeInfo
+		
+	End Function
+	'// END MAIN
+
+	'//---------------------------------------------------------------------------
+	'//  Support Routines 
+	'//---------------------------------------------------------------------------
+	Function GetOSName
+		If Left(oEnvironment.Item("ImageBuild"),3) = "5.1" Then
+			oEnvironment.Item("MyOSName") = "Windows XP"
+		ElseIf Left(oEnvironment.Item("ImageBuild"),3) = "5.2" Then
+			If Left(oEnvironment.Item("ImageFlags"),6) = "Server" Then
+				oEnvironment.Item("MyOSName") = "Windows Server 2003"
+			Else
+				oEnvironment.Item("MyOSName") = "Windows XP"	'x64 Edition
+			End If
+		ElseIf Left(oEnvironment.Item("ImageBuild"),3) = "6.0" Then
+			If Left(oEnvironment.Item("ImageFlags"),6) = "Server" Then
+				oEnvironment.Item("MyOSName") = "Windows Server 2008"
+			Else
+				oEnvironment.Item("MyOSName") = "Windows Vista"
+			End If
+		ElseIf Left(oEnvironment.Item("ImageBuild"),3) = "6.1" Then
+			If Left(oEnvironment.Item("ImageFlags"),6) = "Server" Then
+				oEnvironment.Item("MyOSName") = "Windows Server 2008 R2"
+			Else
+				oEnvironment.Item("MyOSName") = "Windows 7"
+			End If
+		ElseIf Left(oEnvironment.Item("ImageBuild"),3) = "6.2" Then
+			If Left(oEnvironment.Item("ImageFlags"),6) = "Server" Then
+				oEnvironment.Item("MyOSName") = "Windows Server 2012"
+			Else
+				oEnvironment.Item("MyOSName") = "Windows 8"
+			End If
+		ElseIf Left(oEnvironment.Item("ImageBuild"),3) = "6.3" Then
+			If Left(oEnvironment.Item("ImageFlags"),6) = "Server" Then
+				oEnvironment.Item("MyOSName") = "Windows Server 2012 R2"
+			Else
+				oEnvironment.Item("MyOSName") = "Windows 8.1"
+			End If
+		ElseIf Left(oEnvironment.Item("ImageBuild"),3) = "10." Then
+			If Left(oEnvironment.Item("ImageFlags"),6) = "Server" Then
+				oEnvironment.Item("MyOSName") = "Windows Server 10"
+			Else
+				oEnvironment.Item("MyOSName") = "Windows 10"
+			End If
+		End If
+		
+		If oEnvironment.Item("MyOSName") = "" Then oEnvironment.Item("MyOSName") = "Unknown"
+	End Function
+	
+End Class
+
+	</script>
+</job>
