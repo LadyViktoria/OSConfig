@@ -19,8 +19,8 @@
 	Const Reference			=	"https://winpeguy.wordpress.com/"
 
 	Const Title 			=	"OSConfig"
-	Const Version 			=	20151130
-	Const VersionFull 		=	20151130.1
+	Const Version 			=	20151201
+	Const VersionFull 		=	20151201.1
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -342,7 +342,7 @@ Sub OSConfigOEMFolders
 	End If
 	
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$1") Then
-		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$1 %SystemDrive%\ *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OSConfigSystemDrive.log"
+		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$1 %SystemDrive%\ *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMSystemDrive.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
@@ -350,7 +350,7 @@ Sub OSConfigOEMFolders
 	End If
 	
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$1 " & MyArchitecture) Then
-		sCmd = "robocopy " & Chr(34) & "%WinDir%\OSConfig\$OEM$\$1 " & MyArchitecture & Chr(34) & " %SystemDrive% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OSConfigWindows.log"
+		sCmd = "robocopy " & Chr(34) & "%WinDir%\OSConfig\$OEM$\$1 " & MyArchitecture & Chr(34) & " %SystemDrive% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
