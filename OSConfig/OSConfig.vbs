@@ -20,7 +20,7 @@
 
 	Const Title 			=	"OSConfig"
 	Const Version 			=	20151202
-	Const VersionFull 		=	20151202.2
+	Const VersionFull 		=	20151202.4
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -36,6 +36,7 @@
 	'20151202	Added functions for AppAssoc, currently in testing
 	'			Corrected logging of OEM Folders
 	'			Renamed Registry Backup Reg files for PostOSConfig
+	'			Resolved issue when using LockScreen.jpg
 
 '============================================================================================== SYSTEM CONSTANTS
 
@@ -555,6 +556,7 @@ Sub OSConfigTheme
 		TraceLog "Setting " & dFile & " to Default", 1
 		sCmd = "reg add HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization /v LockScreenImage /t REG_SZ /d """"%SystemDrive%\Windows\Web\Screen\LockScreen.jpg"""" /f"
 		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
 	Else
 		TraceLog "File was NOT located", 1
 	End If
