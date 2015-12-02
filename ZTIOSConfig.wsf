@@ -8,11 +8,18 @@
 ' // 
 ' // Author:    	David Segura
 ' // 
-' // Version:   	20151130
+' // Version:   	20151202
 ' // 
 ' // Purpose:   	Updates the OS Configuration for Windows Deployments
 ' //
 ' // Requirements:	Requires Robocopy on the Client OS (Windows XP)
+' // 
+' // ***************************************************************************
+
+' // ***************************************************************************
+' // 
+' // 20151130	Initial Release
+' // 20151202	Added Robocopy exclusion for .gitignore
 ' // 
 ' // ***************************************************************************
 
@@ -184,7 +191,7 @@ Class ZTIOSConfig
 		oFile.WriteLine "@echo off"
 		
 		oFile.WriteLine "echo Copying OSConfig to %WinDir%\OSConfig for Archiving (excluding OSConfig.cmd)"
-		oFile.WriteLine "robocopy %SystemDrive%\_SMSTaskSequence\OSConfig %WinDir%\OSConfig *.* /mir /ndl /xj /r:0 /w:0 /xf OSConfig.cmd"
+		oFile.WriteLine "robocopy %SystemDrive%\_SMSTaskSequence\OSConfig %WinDir%\OSConfig *.* /mir /ndl /xj /r:0 /w:0 /xf OSConfig.cmd .gitignore"
 		oFile.WriteLine ""
 		
 		oFile.WriteLine "echo Executing OSConfig Settings"

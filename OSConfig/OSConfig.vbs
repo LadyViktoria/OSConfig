@@ -19,8 +19,8 @@
 	Const Reference			=	"https://winpeguy.wordpress.com/"
 
 	Const Title 			=	"OSConfig"
-	Const Version 			=	20151201
-	Const VersionFull 		=	20151201.1
+	Const Version 			=	20151202
+	Const VersionFull 		=	20151202.2
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -30,6 +30,12 @@
 	Const SupportArea		=	"SupportArea"
 	Const SupportSubject	=	"OSConfig Issue"
 	Const SupportProblem	=	"Complete Description of Problem Including All Logs"
+	
+'============================================================================================== VERSIONS
+	'20151201	Initial Release
+	'20151202	Added functions for AppAssoc, currently in testing
+	'			Corrected logging of OEM Folders
+	'			Renamed Registry Backup Reg files for PostOSConfig
 
 '============================================================================================== SYSTEM CONSTANTS
 
@@ -183,8 +189,11 @@
 	TraceLog "============================================================= Creating Registry Backup Before OSConfig", 1
 	OSConfigRegistryBackupPre
 
-	TraceLog "============================================================= List AppxPackages Before OSConfig", 1
+	TraceLog "============================================================= Backup AppxPackages Before OSConfig", 1
 	OSConfigAppxPackagesPre
+	
+	TraceLog "============================================================= Export-DefaultAppAssociations Before OSConfig", 1
+	OSConfigDefaultAppAssociationsPre
 
 	TraceLog "============================================================= Processing Theme Files", 1
 	OSConfigTheme
@@ -194,6 +203,9 @@
 	
 	TraceLog "============================================================= List AppxPackages After OSConfig", 1
 	OSConfigAppxPackagesPost
+	
+	TraceLog "============================================================= Export-DefaultAppAssociations After OSConfig", 1
+	OSConfigDefaultAppAssociationsPost
 	
 	TraceLog "============================================================= Creating Registry Backup After OSConfig", 1
 	OSConfigRegistryBackupPost
@@ -326,7 +338,7 @@ End Sub
 '==============================================================================================
 Sub OSConfigOEMFolders
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$$") Then
-		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$$ %WinDir% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OSConfigWindows.log"
+		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$$ %WinDir% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
@@ -334,7 +346,7 @@ Sub OSConfigOEMFolders
 	End If
 
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$$ " & MyArchitecture) Then
-		sCmd = "robocopy " & """%WinDir%\OSConfig\$OEM$\$$ " & MyArchitecture & Chr(34) & " %WinDir% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OSConfigWindows.log"
+		sCmd = "robocopy " & """%WinDir%\OSConfig\$OEM$\$$ " & MyArchitecture & Chr(34) & " %WinDir% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
@@ -350,7 +362,7 @@ Sub OSConfigOEMFolders
 	End If
 	
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$1 " & MyArchitecture) Then
-		sCmd = "robocopy " & Chr(34) & "%WinDir%\OSConfig\$OEM$\$1 " & MyArchitecture & Chr(34) & " %SystemDrive% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
+		sCmd = "robocopy " & Chr(34) & "%WinDir%\OSConfig\$OEM$\$1 " & MyArchitecture & Chr(34) & " %SystemDrive% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMSystemDrive.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
@@ -417,19 +429,36 @@ End Sub
 '==============================================================================================
 Sub OSConfigAppxPackagesPre
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
-		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackages.txt", 2
+		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackages.txt", 1
 		sCmd = "powershell Get-AppxPackage | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 		sCmd = "powershell Get-AppxPackage | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt -Append"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 		
-		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt", 2
+		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt", 1
 		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackagePostOSConfig.txt -Append"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
-		TraceLog "AppxPackages do not apply to this OS", 2
+		TraceLog "AppxPackages do not apply to this OS", 1
+	End If
+	TraceLog "Section Complete", 1
+End Sub
+'==============================================================================================
+'==============================================================================================
+Sub OSConfigDefaultAppAssociationsPre
+	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
+		TraceLog "Exporting Default App Associations at C:\Windows\OSConfig\Logs\AppAssoc.xml", 1
+		sCmd = "Dism /Online /Export-DefaultAppAssociations:C:\Windows\OSConfig\Logs\AppAssoc.xml"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+	Else
+		TraceLog "Dism Export-DefaultAppAssociations does not apply to this OS", 1
 	End If
 	TraceLog "Section Complete", 1
 End Sub
@@ -617,6 +646,7 @@ Function ApplyConfigs(ConfigsDir)
 				
 				If Instr(UCase(OSConfigFile.Name), "SAMPLE") Then
 					TraceLog OSConfigFile.Name & " is a Sample . . . Skipping", 1
+
 				ElseIf Instr(UCase(OSConfigFile.Name), "UNDO") Then
 					TraceLog OSConfigFile.Name & " is an Undo File . . . Skipping", 1
 				ElseIf Instr(UCase(OSConfigFile.Name), "TSYES") and NOT objFSO.FileExists("C:\_SMSTaskSequence\OSConfig\OSConfig.cmd") Then
@@ -639,6 +669,12 @@ Function ApplyConfigs(ConfigsDir)
 					TraceLog OSConfigFile.Name & " requires x64 Architecture . . . Moving to NotApplicable", 1
 					objFSO.CopyFile OSConfigFile.Path, MyWindir & "\OSConfig\Settings\NotApplicable\" & OSConfigFile.Name, True
 					objFSO.DeleteFile OSConfigFile.Path
+				ElseIf Instr(UCase(OSConfigFile.Name), "APPASSOC") Then
+					TraceLog "Importing Default App Associations at C:\Windows\OSConfig\Settings\" & OSConfigFile.Name, 1
+					sCmd = "cmd /c Dism /Online /Import-DefaultAppAssociations:""C:\Windows\OSConfig\Settings\" & OSConfigFile.Name & """"
+					'sCmd = "Dism /Image:C:\ /Import-DefaultAppAssociations:""C:\Windows\OSConfig\Settings\" & OSConfigFile.Name & """"
+					TraceLog "Running Command: " & sCmd, 1
+					objShell.Run sCmd, 1, True
 				Else
 					Extension = UCase(Right(OSConfigFile.Name, 3))
 					Select Case Extension
@@ -752,16 +788,20 @@ End Function
 '==============================================================================================
 Sub OSConfigAppxPackagesPost
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
-		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackagePostOSConfig.txt", 2
-		sCmd = "powershell Get-AppxPackage | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackagePostOSConfig.txt"
+		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt", 2
+		sCmd = "powershell Get-AppxPackage | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-AppxPackage | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackagePostOSConfig.txt -Append"
+		sCmd = "powershell Get-AppxPackage | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt -Append"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 		
-		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackagePostOSConfig.txt", 2
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackagePostOSConfig.txt"
+		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt", 2
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackagePostOSConfig.txt -Append"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
+		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
 		TraceLog "AppxPackages do not apply to this OS", 2
@@ -770,15 +810,28 @@ Sub OSConfigAppxPackagesPost
 End Sub
 '==============================================================================================
 '==============================================================================================
+Sub OSConfigDefaultAppAssociationsPost
+	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
+		TraceLog "Exporting Default App Associations at C:\Windows\OSConfig\Logs\AppAssoc-PostOSConfig.xml", 2
+		sCmd = "Dism /Online /Export-DefaultAppAssociations:C:\Windows\OSConfig\Logs\AppAssoc-PostOSConfig.xml"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+	Else
+		TraceLog "Dism Export-DefaultAppAssociations does not apply to this OS", 2
+	End If
+	TraceLog "Section Complete", 1
+End Sub
+'==============================================================================================
+'==============================================================================================
 Sub OSConfigRegistryBackupPost
-	objShell.Run "reg export HKCU %WinDir%\OSConfig\Registry\Backup\HKEY_CURRENT_USER.PostOSConfig.reg /y", 7, True
-	objShell.Run "reg export HKLM\DefaultUser %WinDir%\OSConfig\Registry\Backup\DEFAULT_USER.PostOSConfig.reg /y", 7, True
-	objShell.Run "reg export HKU\.DEFAULT %WinDir%\OSConfig\Registry\Backup\HKEY_USERS.DEFAULT.PostOSConfig.reg /y", 7, True
-	objShell.Run "reg export HKLM\SOFTWARE\Microsoft %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Microsoft.PostOSConfig.reg /y", 7, True
-	objShell.Run "reg export HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Microsoft.Windows.CurrentVersion.Explorer.PostOSConfig.reg /y", 7, True
-	objShell.Run "reg export HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Microsoft.Windows.CurrentVersion.Policies.PostOSConfig.reg /y", 7, True
-	objShell.Run "reg export HKLM\SOFTWARE\Policies %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Policies.PostOSConfig.reg /y", 7, True
-	objShell.Run "reg export HKLM\SYSTEM %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SYSTEM.PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKCU %WinDir%\OSConfig\Registry\Backup\HKEY_CURRENT_USER-PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKLM\DefaultUser %WinDir%\OSConfig\Registry\Backup\DEFAULT_USER-PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKU\.DEFAULT %WinDir%\OSConfig\Registry\Backup\HKEY_USERS.DEFAULT-PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKLM\SOFTWARE\Microsoft %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Microsoft-PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Microsoft.Windows.CurrentVersion.Explorer-PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Microsoft.Windows.CurrentVersion.Policies-PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKLM\SOFTWARE\Policies %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SOFTWARE.Policies-PostOSConfig.reg /y", 7, True
+	objShell.Run "reg export HKLM\SYSTEM %WinDir%\OSConfig\Registry\Backup\HKEY_LOCAL_MACHINE.SYSTEM-PostOSConfig.reg /y", 7, True
 	TraceLog "Section Complete", 1
 End Sub
 '==============================================================================================
