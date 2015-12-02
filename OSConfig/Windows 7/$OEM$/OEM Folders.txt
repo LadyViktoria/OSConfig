@@ -1,6 +1,6 @@
 To enable OEM Folders create the following directories:
 
-$OEM$
+$OEM$		This is the current Directory you are in
 $OEM$\$$	Files in this directory will be copied to C:\Windows
 $OEM$\$$ x64	Files in this directory will be copied to C:\Windows on x64 Computers.  There is a space in the directory name
 $OEM$\$$ x86	Files in this directory will be copied to C:\Windows on x86 Computers.  There is a space in the directory name
