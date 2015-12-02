@@ -1,1 +1,0 @@
-Files in this directory are applied to Windows 8.1 Deployments
