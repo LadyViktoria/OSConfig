@@ -20,7 +20,7 @@
 
 	Const Title 			=	"OSConfig"
 	Const Version 			=	20151204
-	Const VersionFull 		=	20151204.1
+	Const VersionFull 		=	20151204.2
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -475,7 +475,6 @@ Sub OSConfigTheme
 	'Install.cmd
 	sFile = MyWindir & "\OSConfig\Theme\Install.cmd"
 	TraceLog "Configuring: " & sFile, 2
-	TraceLog "Execute " & sFile, 1
 	If objFSO.FileExists(sFile) Then
 		sCmd = "cmd /c """ & sFile & """"
 		TraceLog "Running Command: " & sCmd, 1
@@ -520,6 +519,18 @@ Sub OSConfigTheme
 		End If
 		TraceLog "File was located and will be copied", 1
 		objFSO.CopyFile sFile, dFile, True
+	Else
+		TraceLog "File was NOT located.  No actions taken.", 1
+	End If
+	
+	'OEMLogo.bmp
+	sFile = MyWindir & "\OSConfig\Theme\Logos\OEMLogo.bmp"
+	TraceLog "Configuring: " & sFile, 2
+	If objFSO.FileExists(sFile) Then
+		TraceLog "Setting Logo in OEMInformation", 1
+		sCmd = "reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation /v Logo /t REG_SZ /d """"%SystemRoot%\OSConfig\Theme\Logos\OEMLogo.bmp"""" /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
 	Else
 		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
@@ -571,19 +582,7 @@ Sub OSConfigTheme
 	Else
 		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
-	
-	'OEMLogo.bmp
-	sFile = MyWindir & "\OSConfig\Theme\Logos\OEMLogo.bmp"
-	TraceLog "Configuring: " & sFile, 1
-	If objFSO.FileExists(sFile) Then
-		TraceLog "Setting Logo in OEMInformation", 1
-		sCmd = "reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation /v Logo /t REG_SZ /d """"%SystemRoot%\OSConfig\Theme\Logos\OEMLogo.bmp"""" /f"
-		TraceLog "Running Command: " & sCmd, 1
-		objShell.Run sCmd, 7, True
-	Else
-		TraceLog "File was NOT located.  No actions taken.", 1
-	End If
-	
+
 	'Background.bmp
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\Background.bmp"
 	TraceLog "Configuring: " & sFile, 2
@@ -603,6 +602,7 @@ Sub OSConfigTheme
 	Else
 		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
+	
 	
 	'backgroundDefault.jpg
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\backgroundDefault.jpg"

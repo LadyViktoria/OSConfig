@@ -5,6 +5,6 @@
 Set Arch=x64
 If /I %Processor_Architecture%==x86 Set Arch=x86
 
-echo powershell -ExecutionPolicy Bypass Export-StartLayout -Path '%~dp0LayoutModification%Arch%.xml' -Verbose
-powershell -ExecutionPolicy Bypass Export-StartLayout -Path '%~dp0LayoutModification%Arch%.xml' -Verbose
+echo powershell Export-StartLayout -Path '%~dp0LayoutModification%Arch%.xml' -Verbose
+powershell Export-StartLayout -Path '%~dp0LayoutModification%Arch%.xml' -Verbose
 pause

@@ -5,6 +5,6 @@
 Set Arch=x64
 If /I %Processor_Architecture%==x86 Set Arch=x86
 
-echo powershell -ExecutionPolicy Bypass Import-StartLayout -LayoutPath '%~dp0LayoutModification%Arch%.xml' -MountPath %SystemDrive%\
-powershell -ExecutionPolicy Bypass Import-StartLayout -LayoutPath '%~dp0LayoutModification%Arch%.xml' -MountPath %SystemDrive%\
+echo powershell Import-StartLayout -LayoutPath '%~dp0LayoutModification%Arch%.xml' -MountPath %SystemDrive%\
+powershell Import-StartLayout -LayoutPath '%~dp0LayoutModification%Arch%.xml' -MountPath %SystemDrive%\
 pause
