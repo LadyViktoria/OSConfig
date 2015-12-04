@@ -19,8 +19,8 @@
 	Const Reference			=	"https://winpeguy.wordpress.com/"
 
 	Const Title 			=	"OSConfig"
-	Const Version 			=	20151202
-	Const VersionFull 		=	20151202.4
+	Const Version 			=	20151204
+	Const VersionFull 		=	20151204.1
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -32,12 +32,14 @@
 	Const SupportProblem	=	"Complete Description of Problem Including All Logs"
 	
 '============================================================================================== VERSIONS
-	'20151201	Initial Release
-	'20151202	Added functions for AppAssoc, currently in testing
-	'			Corrected logging of OEM Folders
-	'			Renamed Registry Backup Reg files for PostOSConfig
-	'			Resolved issue when using LockScreen.jpg
-
+'	20151204	Theme: AddedOEMLogo.bmp support
+'				Theme: Removed Logon Background Image if Lock Screen Image exists
+'	20151203	Updated sorting for Appx Package Exports
+'	20151202	Added functions for AppAssoc, currently in testing
+'				Corrected logging of OEM Folders
+'				Renamed Registry Backup Reg files for PostOSConfig
+'				Resolved issue when using LockScreen.jpg
+'	20151201	Initial Release
 '============================================================================================== SYSTEM CONSTANTS
 
 	Const ForReading			=	1
@@ -431,18 +433,18 @@ End Sub
 Sub OSConfigAppxPackagesPre
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
 		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackages.txt", 1
-		sCmd = "powershell Get-AppxPackage | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt"
+		sCmd = "powershell Get-AppxPackage | Sort Name | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-AppxPackage | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt -Append"
+		sCmd = "powershell Get-AppxPackage | Sort Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 		
 		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt", 1
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
@@ -472,19 +474,21 @@ Sub OSConfigTheme
 
 	'Install.cmd
 	sFile = MyWindir & "\OSConfig\Theme\Install.cmd"
-	TraceLog "Execute " & sFile, 2
+	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Execute " & sFile, 1
 	If objFSO.FileExists(sFile) Then
 		sCmd = "cmd /c """ & sFile & """"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 	
 	'Aero.theme
 	sFile = MyWindir & "\OSConfig\Theme\Themes\aero.theme"
+	TraceLog "Configuring: " & sFile, 2
 	dFile = MyWindir & "\Resources\Themes\aero.theme"
-	TraceLog "Copy " & sFile & " to " & dFile, 2
+	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
 		If objFSO.FileExists(dFile) Then
 			sCmd = "takeown /F """ & dFile & """"
@@ -497,13 +501,14 @@ Sub OSConfigTheme
 		TraceLog "File was located and will be copied", 1
 		objFSO.CopyFile sFile, dFile, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 
 	'Basic.theme
 	sFile = MyWindir & "\OSConfig\Theme\Themes\basic.theme"
+	TraceLog "Configuring: " & sFile, 2
 	dFile = MyWindir & "\Resources\Ease of Access Themes\basic.theme"
-	TraceLog "Copy " & sFile & " to " & dFile, 2
+	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
 		If objFSO.FileExists(dFile) Then
 			sCmd = "takeown /F """ & dFile & """"
@@ -516,13 +521,14 @@ Sub OSConfigTheme
 		TraceLog "File was located and will be copied", 1
 		objFSO.CopyFile sFile, dFile, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 	
 	'img0.jpg
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\img0.jpg"
+	TraceLog "Configuring: " & sFile, 2
 	dFile = MyWindir & "\Web\Wallpaper\Windows\img0.jpg"
-	TraceLog "Copy " & sFile & " to " & dFile, 2
+	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
 		If objFSO.FileExists(dFile) Then
 			sCmd = "takeown /F """ & dFile & """"
@@ -535,13 +541,14 @@ Sub OSConfigTheme
 		TraceLog "File was located and will be copied", 1
 		objFSO.CopyFile sFile, dFile, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 	
 	'LockScreen.jpg
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\LockScreen.jpg"
+	TraceLog "Configuring: " & sFile, 2
 	dFile = MyWindir & "\Web\Screen\LockScreen.jpg"
-	TraceLog "Copy " & sFile & " to " & dFile, 2
+	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
 		If objFSO.FileExists(dFile) Then
 			sCmd = "takeown /F """ & dFile & """"
@@ -554,17 +561,34 @@ Sub OSConfigTheme
 		TraceLog "File was located and will be copied", 1
 		objFSO.CopyFile sFile, dFile, True
 		TraceLog "Setting " & dFile & " to Default", 1
-		sCmd = "reg add HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization /v LockScreenImage /t REG_SZ /d """"%SystemDrive%\Windows\Web\Screen\LockScreen.jpg"""" /f"
+		sCmd = "reg add HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization /v LockScreenImage /t REG_SZ /d """"%SystemRoot%\Web\Screen\LockScreen.jpg"""" /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+		TraceLog "Disabling Logon Background Image", 1
+		sCmd = "reg add HKLM\SOFTWARE\Policies\Microsoft\Windows\System /v DisableLogonBackgroundImage /t REG_DWORD /d 1 /f"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
+	End If
+	
+	'OEMLogo.bmp
+	sFile = MyWindir & "\OSConfig\Theme\Logos\OEMLogo.bmp"
+	TraceLog "Configuring: " & sFile, 1
+	If objFSO.FileExists(sFile) Then
+		TraceLog "Setting Logo in OEMInformation", 1
+		sCmd = "reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation /v Logo /t REG_SZ /d """"%SystemRoot%\OSConfig\Theme\Logos\OEMLogo.bmp"""" /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+	Else
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 	
 	'Background.bmp
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\Background.bmp"
+	TraceLog "Configuring: " & sFile, 2
 	dFile = MyWindir & "\System32\oobe\Background.bmp"
-	TraceLog "Copy " & sFile & " to " & dFile, 2
+	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
 		If objFSO.FileExists(dFile) Then
 			sCmd = "takeown /F """ & dFile & """"
@@ -577,13 +601,14 @@ Sub OSConfigTheme
 		TraceLog "File was located and will be copied", 1
 		objFSO.CopyFile sFile, dFile, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 	
 	'backgroundDefault.jpg
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\backgroundDefault.jpg"
+	TraceLog "Configuring: " & sFile, 2
 	dFile = MyWindir & "\System32\oobe\info\backgrounds\backgroundDefault.jpg"
-	TraceLog "Copy " & sFile & " to " & dFile, 2
+	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
 		If objFSO.FileExists(dFile) Then
 			sCmd = "takeown /F """ & dFile & """"
@@ -598,28 +623,29 @@ Sub OSConfigTheme
 		TraceLog "File was located and will be copied", 1
 		objFSO.CopyFile sFile, dFile, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 	
 
 	'User Account Pictures
-	TraceLog "Copy " & MyWindir & "\OSConfig\Theme\User Account Pictures to " & MySystemDrive & "\ProgramData\Microsoft\User Account Pictures", 2
+	TraceLog "Configuring: " & MyWindir & "\OSConfig\Theme\User Account Pictures", 2
+	TraceLog "Copy " & MyWindir & "\OSConfig\Theme\User Account Pictures to " & MySystemDrive & "\ProgramData\Microsoft\User Account Pictures", 1
 	If objFSO.FolderExists(MyWindir & "\OSConfig\Theme\User Account Pictures") Then
 		TraceLog "Folder was located and will be copied", 1
 		objFSO.CopyFolder MyWindir & "\OSConfig\Theme\User Account Pictures", MySystemDrive & "\ProgramData\Microsoft", True
 	Else
-		TraceLog "Folder was NOT located", 1
+		TraceLog "Folder was NOT located.  No actions taken.", 1
 	End If
 	
 
 	'LayoutModification
-	TraceLog "Apply " & MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml using PowerShell", 2
+	TraceLog "Configuring: " & MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml", 2
 	If objFSO.FileExists(MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml") Then
 		sCmd = "powershell -ExecutionPolicy Bypass Import-StartLayout -LayoutPath " & MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml -MountPath $env:SystemDrive\"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
-		TraceLog "File was NOT located", 1
+		TraceLog "File was NOT located.  No actions taken.", 1
 	End If
 	
 	TraceLog "Section Complete", 1
@@ -791,18 +817,18 @@ End Function
 Sub OSConfigAppxPackagesPost
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
 		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt", 2
-		sCmd = "powershell Get-AppxPackage | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt"
+		sCmd = "powershell Get-AppxPackage | Sort Name | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-AppxPackage | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt -Append"
+		sCmd = "powershell Get-AppxPackage | Sort Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 		
 		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt", 2
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
