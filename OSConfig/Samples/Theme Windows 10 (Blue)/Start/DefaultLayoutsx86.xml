@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FullDefaultLayoutTemplate 
+    xmlns="http://schemas.microsoft.com/Start/2014/FullDefaultLayout"
+    xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout"
+    Version="1">
+	<StartLayoutCollection>
+		<!-- 6 cell wide Desktop layout with no Preinstalled apps and no Cortana-->
+		<StartLayout
+            GroupCellWidth="6"
+            PreInstalledAppsEnabled="false">
+			<start:Group Name="Windows">
+			<!-- Row 1 -->
+				<!-- This PC -->			<start:DesktopApplicationTile Size="2x2" Row="0" Column="0" DesktopApplicationID="Microsoft.Windows.Computer" />
+				<!-- File Explorer -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="2" DesktopApplicationID="Microsoft.Windows.Explorer" />
+				<!-- Control Panel -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="0" DesktopApplicationID="Microsoft.Windows.ControlPanel" />
+			<!-- Row 2 -->
+				<!-- Settings -->			<start:Tile                   Size="2x2" Row="2" Column="2" AppUserModelID="windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel" />
+				<!-- Edge -->				<start:Tile                   Size="2x2" Row="4" Column="0" AppUserModelID="Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge" />
+				<!-- Internet Explorer -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="2" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Accessories\Internet Explorer.lnk" />
+			<!-- Row 3 -->
+				<!-- Run -->				<start:DesktopApplicationTile Size="2x2" Row="0" Column="4" DesktopApplicationID="Microsoft.Windows.Shell.RunDialog" />
+				<!-- Command Prompt -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Command Prompt.lnk" />
+				<!-- Software Center -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Microsoft System Center\Configuration Manager\Software Center.lnk" />
+			</start:Group>
+		</StartLayout>
+
+		<!-- Server 6 cell wide without Cortana -->
+		<StartLayout
+            GroupCellWidth="6"
+            SKU="Server|ServerSolution">
+			<start:Group Name="Windows">
+			<!-- Row 1 -->
+				<!-- This PC -->			<start:DesktopApplicationTile Size="2x2" Row="0" Column="0" DesktopApplicationID="Microsoft.Windows.Computer" />
+				<!-- File Explorer -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="2" DesktopApplicationID="Microsoft.Windows.Explorer" />
+				<!-- Control Panel -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="0" DesktopApplicationID="Microsoft.Windows.ControlPanel" />
+			<!-- Row 2 -->
+				<!-- Settings -->			<start:Tile                   Size="2x2" Row="2" Column="2" AppUserModelID="windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel" />
+				<!-- Edge -->				<start:Tile                   Size="2x2" Row="4" Column="0" AppUserModelID="Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge" />
+				<!-- Internet Explorer -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="2" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Accessories\Internet Explorer.lnk" />
+			<!-- Row 3 -->
+				<!-- Run -->				<start:DesktopApplicationTile Size="2x2" Row="0" Column="4" DesktopApplicationID="Microsoft.Windows.Shell.RunDialog" />
+				<!-- Command Prompt -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Command Prompt.lnk" />
+				<!-- Software Center -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Microsoft System Center\Configuration Manager\Software Center.lnk" />
+			</start:Group>
+			<start:Group Name="Server">
+			<!-- Row 1 -->
+				<!-- Server Manager -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="0" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Server Manager.lnk" />
+				<!-- Admin Tools -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="2" DesktopApplicationLinkPath="%APPDATA%\Microsoft\Windows\Start Menu\Programs\System Tools\Administrative Tools.lnk" />
+				<!-- Task Manager -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Task Manager.lnk" />
+			<!-- Row 2 -->
+				<!-- PowerShell -->			<start:DesktopApplicationTile Size="2x2" Row="2" Column="0" DesktopApplicationLinkPath="%APPDATA%\Microsoft\Windows\Start Menu\Programs\Windows PowerShell\Windows PowerShell.lnk" />
+				<!-- PowerShell ISE -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="2" DesktopApplicationLinkPath="%APPDATA%\Microsoft\Windows\Start Menu\Programs\Windows PowerShell\Windows PowerShell ISE.lnk" />
+			</start:Group>
+		</StartLayout>
+	</StartLayoutCollection>
+</FullDefaultLayoutTemplate>
+
+<!-- Reference
+
+	Shortcuts do not exist and will not be visible on User Accounts created prior to Office installation (Administrator)
+	Internet Explorer shortcut must be copied to %ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Accessories\Internet Explorer.lnk
+	Command Prompt shortcut must be copied to %ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Command Prompt.lnk
+	Software Center shortcut must be copied to %ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Microsoft System Center\Configuration Manager\Software Center.lnk
+	
+	Office Group will not be visible on User Accounts created prior to Office installation (Administrator)
+
+	Manage Windows 10 Start layout options
+	https://technet.microsoft.com/en-us/library/mt484194(v=vs.85).aspx
+
+	Customize the Windows 10 Start screen
+	https://msdn.microsoft.com/en-us/library/windows/hardware/mt170651(v=vs.85).aspx
+
+	Start layout for Windows 10 desktop editions
+	https://msdn.microsoft.com/en-us/library/windows/hardware/mt171092(v=vs.85).aspx
+	
+	Windows.UI.StartScreen namespace
+	https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.startscreen.aspx
+	
+	Pinning Internet Explorer to Start Menu with LayoutModification.xml file
+	http://answers.microsoft.com/en-us/windows/forum/windows_10-start/pinning-internet-explorer-to-start-menu-with/8d143d5f-cc12-496a-b9bf-7626d5633c57?auth=1
+	
+	Customizing the Windows 10 Start Menu and add IE Shortcut during OSD
+	http://ccmexec.com/2015/09/customizing-the-windows-10-start-menu-and-add-ie-shortcut-during-osd/
+	
+-->
+	
+	
+	
+	

@@ -19,8 +19,8 @@
 	Const Reference			=	"https://winpeguy.wordpress.com/"
 
 	Const Title 			=	"OSConfig"
-	Const Version 			=	20151204
-	Const VersionFull 		=	20151204.2
+	Const Version 			=	20151208
+	Const VersionFull 		=	20151208.1
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -135,15 +135,15 @@
 	Dim Return
 	Dim Failed
 
-	TraceLog "============================================================= Checking Admin Rights", 1
+	TraceLog "============================================================= Checking Admin Rights", 2
 	'Wscript.Echo "Checking Admin Rights"
 	IsAdmin						'Will return IsAdmin = True if it is running with Admin Rights
 
-	TraceLog "============================================================= Checking System Account", 1
+	TraceLog "============================================================= Checking System Account", 2
 	'Wscript.Echo "Checking System Account"
 	IsSystem					'Checks to see if this is running under the System Account
 
-	TraceLog "============================================================= Processing Operating System", 1
+	TraceLog "============================================================= Processing Operating System", 2
 	Dim MyOperatingSystem
 	
 	'Set MyOperatingSystem to Unknown by default
@@ -161,65 +161,79 @@
 
 
 
-	TraceLog "============================================================= Checking Command Line Arguments", 1
+	TraceLog "============================================================= Checking Command Line Arguments", 2
 	Dim sArgumentUAC
 	CheckArguments
 	
-	TraceLog "============================================================= Processing Elevation", 1
+	TraceLog "============================================================= Processing Elevation", 2
 	Elevation
 
-	TraceLog "============================================================= Creating Local Directories", 1
+	TraceLog "============================================================= Creating Local Directories", 2
 	OSConfigCreateLocalDirectories
 	
-	TraceLog "============================================================= Creating Registry Snapshot CMD", 1
+	TraceLog "============================================================= Creating Registry Snapshot CMD", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-registry-snapshot/", 1
 	OSConfigCreateRegistryCMD
 
-	TraceLog "============================================================= Merging OSConfig to Production Format", 1
+	TraceLog "============================================================= Merging OSConfig to Production Format", 2
 	OSConfigMergeFolders
 	
-	TraceLog "============================================================= Removing Unnecessary Content", 1
+	TraceLog "============================================================= Removing Unnecessary Content", 2
 	OSConfigCleanupContent
 
-	TraceLog "============================================================= Processing OEM Folders", 1
+	TraceLog "============================================================= Processing OEM Folders", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/01/tool-osconfig-oem-folders/", 1
 	OSConfigOEMFolders
 
-	TraceLog "============================================================= Mounting Default User Hive", 1
+	TraceLog "============================================================= Mounting Default User Hive", 2
 	OSConfigMountDefaultUser
 	
-	TraceLog "============================================================= Mounting Administrator Hive", 1
+	TraceLog "============================================================= Mounting Administrator Hive", 2
 	OSConfigMountAdministrator
 
-	TraceLog "============================================================= Creating Registry Backup Before OSConfig", 1
+	TraceLog "============================================================= Creating Registry Backup Before OSConfig", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-registry-backup/", 1
 	OSConfigRegistryBackupPre
 
-	TraceLog "============================================================= Backup AppxPackages Before OSConfig", 1
+	TraceLog "============================================================= Backup AppxPackages Before OSConfig", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-logs/", 1
 	OSConfigAppxPackagesPre
 	
-	TraceLog "============================================================= Export-DefaultAppAssociations Before OSConfig", 1
+	TraceLog "============================================================= Export-DefaultAppAssociations Before OSConfig", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-logs/", 1
 	OSConfigDefaultAppAssociationsPre
+	
+	TraceLog "============================================================= Windows 10 Disable Consumer Experiences", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/06/win10-start-menu-junk-and-candy-crush-soda-saga/", 1
+	OSConfigConsumerExperiences
 
-	TraceLog "============================================================= Processing Theme Files", 1
+	TraceLog "============================================================= Processing Theme Files", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-theme-sample-windows-10/", 1
 	OSConfigTheme
 
-	TraceLog "============================================================= Processing Settings", 1
+	TraceLog "============================================================= Processing Settings", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-settings/", 1
 	ApplyConfigs(MyScriptParentFolder & "\Settings")
 	
-	TraceLog "============================================================= List AppxPackages After OSConfig", 1
+	TraceLog "============================================================= List AppxPackages After OSConfig", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-logs/", 1
 	OSConfigAppxPackagesPost
 	
-	TraceLog "============================================================= Export-DefaultAppAssociations After OSConfig", 1
+	TraceLog "============================================================= Export-DefaultAppAssociations After OSConfig", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-logs/", 1
 	OSConfigDefaultAppAssociationsPost
 	
-	TraceLog "============================================================= Creating Registry Backup After OSConfig", 1
+	TraceLog "============================================================= Creating Registry Backup After OSConfig", 2
+	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/04/tool-osconfig-registry-backup/", 1
 	OSConfigRegistryBackupPost
 	
-	TraceLog "============================================================= Unmounting Default User Hive", 1
+	TraceLog "============================================================= Unmounting Default User Hive", 2
 	OSConfigUnmountDefaultUser
 	
-	TraceLog "============================================================= Unmounting Administrator Hive", 1
+	TraceLog "============================================================= Unmounting Administrator Hive", 2
 	OSConfigUnmountAdministrator
 	
-	TraceLog "============================================================= Copy Log and Exit", 1
+	TraceLog "============================================================= Copy Log and Exit", 2
 	OSConfigExit
 '==============================================================================================
 '==============================================================================================
@@ -341,7 +355,7 @@ End Sub
 '==============================================================================================
 Sub OSConfigOEMFolders
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$$") Then
-		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$$ %WinDir% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
+		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$$ %WinDir% *.* /e /ndl /xj /r:0 /w:0 /xf desktop.ini /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
@@ -349,7 +363,7 @@ Sub OSConfigOEMFolders
 	End If
 
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$$ " & MyArchitecture) Then
-		sCmd = "robocopy " & """%WinDir%\OSConfig\$OEM$\$$ " & MyArchitecture & Chr(34) & " %WinDir% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
+		sCmd = "robocopy " & """%WinDir%\OSConfig\$OEM$\$$ " & MyArchitecture & Chr(34) & " %WinDir% *.* /e /ndl /xj /r:0 /w:0 /xf desktop.ini /LOG+:" & MyWindir & "\OSConfig\Logs\OEMWindows.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
@@ -357,7 +371,7 @@ Sub OSConfigOEMFolders
 	End If
 	
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$1") Then
-		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$1 %SystemDrive%\ *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMSystemDrive.log"
+		sCmd = "robocopy %WinDir%\OSConfig\$OEM$\$1 %SystemDrive%\ *.* /e /ndl /xj /r:0 /w:0 /xf desktop.ini /LOG+:" & MyWindir & "\OSConfig\Logs\OEMSystemDrive.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
@@ -365,12 +379,17 @@ Sub OSConfigOEMFolders
 	End If
 	
 	If objFSO.FolderExists(MyWindir & "\OSConfig\$OEM$\$1 " & MyArchitecture) Then
-		sCmd = "robocopy " & Chr(34) & "%WinDir%\OSConfig\$OEM$\$1 " & MyArchitecture & Chr(34) & " %SystemDrive% *.* /e /ndl /xj /r:0 /w:0 /LOG+:" & MyWindir & "\OSConfig\Logs\OEMSystemDrive.log"
+		sCmd = "robocopy " & Chr(34) & "%WinDir%\OSConfig\$OEM$\$1 " & MyArchitecture & Chr(34) & " %SystemDrive% *.* /e /ndl /xj /r:0 /w:0 /xf desktop.ini /LOG+:" & MyWindir & "\OSConfig\Logs\OEMSystemDrive.log"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 1, True
 	Else
 		TraceLog "Not Found: " & MyWindir & "\OSConfig\$OEM$\$1 " & MyArchitecture, 1
 	End If
+	
+	'Reset ProgramData to Hidden if exists
+	sCmd = "attrib C:\ProgramData +H"
+	objShell.Run sCmd, 7, True
+	
 	TraceLog "Section Complete", 1
 End Sub
 '==============================================================================================
@@ -432,19 +451,19 @@ End Sub
 '==============================================================================================
 Sub OSConfigAppxPackagesPre
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
-		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackages.txt", 1
-		sCmd = "powershell Get-AppxPackage | Sort Name | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt"
+		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\MyAppxPackages.txt", 1
+		sCmd = "powershell Get-AppxPackage | Sort Name | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\MyAppxPackage.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-AppxPackage | Sort Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage.txt -Append"
+		sCmd = "powershell Get-AppxPackage | Sort Name | Out-File -FilePath C:\Windows\OSConfig\Logs\MyAppxPackage.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 		
-		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt", 1
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage.txt"
+		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\MyProvisionedAppxPackage.txt", 1
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\MyProvisionedAppxPackage.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\MyProvisionedAppxPackage.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
@@ -456,12 +475,25 @@ End Sub
 '==============================================================================================
 Sub OSConfigDefaultAppAssociationsPre
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
-		TraceLog "Exporting Default App Associations at C:\Windows\OSConfig\Logs\AppAssoc.xml", 1
-		sCmd = "Dism /Online /Export-DefaultAppAssociations:C:\Windows\OSConfig\Logs\AppAssoc.xml"
+		TraceLog "Exporting Default App Associations at C:\Windows\OSConfig\Logs\MyAppAssoc.xml", 1
+		sCmd = "Dism /Online /Export-DefaultAppAssociations:C:\Windows\OSConfig\Logs\MyAppAssoc.xml"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
 		TraceLog "Dism Export-DefaultAppAssociations does not apply to this OS", 1
+	End If
+	TraceLog "Section Complete", 1
+End Sub
+'==============================================================================================
+'==============================================================================================
+Sub OSConfigConsumerExperiences
+	If MyOperatingSystem = "Windows 10" Then
+		TraceLog "Disabling Consumer Experiences", 1
+		sCmd = "reg add HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+	Else
+		TraceLog "Disable Consumer Experiences does not apply to this OS", 1
 	End If
 	TraceLog "Section Complete", 1
 End Sub
@@ -474,7 +506,7 @@ Sub OSConfigTheme
 
 	'Install.cmd
 	sFile = MyWindir & "\OSConfig\Theme\Install.cmd"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	If objFSO.FileExists(sFile) Then
 		sCmd = "cmd /c """ & sFile & """"
 		TraceLog "Running Command: " & sCmd, 1
@@ -485,7 +517,7 @@ Sub OSConfigTheme
 	
 	'Aero.theme
 	sFile = MyWindir & "\OSConfig\Theme\Themes\aero.theme"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	dFile = MyWindir & "\Resources\Themes\aero.theme"
 	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
@@ -505,7 +537,7 @@ Sub OSConfigTheme
 
 	'Basic.theme
 	sFile = MyWindir & "\OSConfig\Theme\Themes\basic.theme"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	dFile = MyWindir & "\Resources\Ease of Access Themes\basic.theme"
 	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
@@ -525,7 +557,7 @@ Sub OSConfigTheme
 	
 	'OEMLogo.bmp
 	sFile = MyWindir & "\OSConfig\Theme\Logos\OEMLogo.bmp"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	If objFSO.FileExists(sFile) Then
 		TraceLog "Setting Logo in OEMInformation", 1
 		sCmd = "reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation /v Logo /t REG_SZ /d """"%SystemRoot%\OSConfig\Theme\Logos\OEMLogo.bmp"""" /f"
@@ -537,7 +569,7 @@ Sub OSConfigTheme
 	
 	'img0.jpg
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\img0.jpg"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	dFile = MyWindir & "\Web\Wallpaper\Windows\img0.jpg"
 	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
@@ -557,7 +589,7 @@ Sub OSConfigTheme
 	
 	'LockScreen.jpg
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\LockScreen.jpg"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	dFile = MyWindir & "\Web\Screen\LockScreen.jpg"
 	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
@@ -585,7 +617,7 @@ Sub OSConfigTheme
 
 	'Background.bmp
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\Background.bmp"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	dFile = MyWindir & "\System32\oobe\Background.bmp"
 	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
@@ -606,7 +638,7 @@ Sub OSConfigTheme
 	
 	'backgroundDefault.jpg
 	sFile = MyWindir & "\OSConfig\Theme\Wallpaper\backgroundDefault.jpg"
-	TraceLog "Configuring: " & sFile, 2
+	TraceLog "Configuring: " & sFile, 1
 	dFile = MyWindir & "\System32\oobe\info\backgrounds\backgroundDefault.jpg"
 	TraceLog "Copy " & sFile & " to " & dFile, 1
 	If objFSO.FileExists(sFile) Then
@@ -628,7 +660,7 @@ Sub OSConfigTheme
 	
 
 	'User Account Pictures
-	TraceLog "Configuring: " & MyWindir & "\OSConfig\Theme\User Account Pictures", 2
+	TraceLog "Configuring: " & MyWindir & "\OSConfig\Theme\User Account Pictures", 1
 	TraceLog "Copy " & MyWindir & "\OSConfig\Theme\User Account Pictures to " & MySystemDrive & "\ProgramData\Microsoft\User Account Pictures", 1
 	If objFSO.FolderExists(MyWindir & "\OSConfig\Theme\User Account Pictures") Then
 		TraceLog "Folder was located and will be copied", 1
@@ -637,9 +669,20 @@ Sub OSConfigTheme
 		TraceLog "Folder was NOT located.  No actions taken.", 1
 	End If
 	
+	'DefaultLayouts.xml
+	sFile = MyWindir & "\OSConfig\Theme\Start\DefaultLayouts" & MyArchitecture & ".xml"
+	TraceLog "Configuring: " & sFile, 1
+	dFile = MySystemDrive & "\Users\Default\AppData\Local\Microsoft\Windows\Shell\DefaultLayouts.xml"
+	TraceLog "Copy " & sFile & " to " & dFile, 1
+	If objFSO.FileExists(sFile) Then
+		TraceLog "File was located and will be copied", 1
+		objFSO.CopyFile sFile, dFile, True
+	Else
+		TraceLog "File was NOT located.  No actions taken.", 1
+	End If
 
 	'LayoutModification
-	TraceLog "Configuring: " & MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml", 2
+	TraceLog "Configuring: " & MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml", 1
 	If objFSO.FileExists(MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml") Then
 		sCmd = "powershell -ExecutionPolicy Bypass Import-StartLayout -LayoutPath " & MyWindir & "\OSConfig\Theme\Start\LayoutModification" & MyArchitecture & ".xml -MountPath $env:SystemDrive\"
 		TraceLog "Running Command: " & sCmd, 1
@@ -685,7 +728,7 @@ Function ApplyConfigs(ConfigsDir)
 					TraceLog OSConfigFile.Name & " requires a Modern Operating System (Windows 7 or Newer) . . . Moving to NotApplicable", 1
 					objFSO.CopyFile OSConfigFile.Path, MyWindir & "\OSConfig\Settings\NotApplicable\" & OSConfigFile.Name, True
 					objFSO.DeleteFile OSConfigFile.Path
-				ElseIf Instr(OSConfigFile.Name, "7+") and MyOperatingSystem = "Windows XP" Then
+				ElseIf Instr(OSConfigFile.Name, "w7+") and MyOperatingSystem = "Windows XP" Then
 					TraceLog OSConfigFile.Name & " requires a Modern Operating System (Windows 7 or Newer) . . . Moving to NotApplicable", 1
 					objFSO.CopyFile OSConfigFile.Path, MyWindir & "\OSConfig\Settings\NotApplicable\" & OSConfigFile.Name, True
 					objFSO.DeleteFile OSConfigFile.Path
@@ -816,23 +859,23 @@ End Function
 '==============================================================================================
 Sub OSConfigAppxPackagesPost
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
-		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt", 2
-		sCmd = "powershell Get-AppxPackage | Sort Name | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt"
+		TraceLog "Creating list of default AppxPackages at C:\Windows\OSConfig\Logs\MyAppxPackage-PostOSConfig.txt", 1
+		sCmd = "powershell Get-AppxPackage | Sort Name | Select Name | Out-File -FilePath C:\Windows\OSConfig\Logs\MyAppxPackage-PostOSConfig.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-AppxPackage | Sort Name | Out-File -FilePath C:\Windows\OSConfig\Logs\AppxPackage-PostOSConfig.txt -Append"
+		sCmd = "powershell Get-AppxPackage | Sort Name | Out-File -FilePath C:\Windows\OSConfig\Logs\MyAppxPackage-PostOSConfig.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 		
-		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt", 2
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt"
+		TraceLog "Creating list of default ProvisionedAppxPackages at C:\Windows\OSConfig\Logs\MyProvisionedAppxPackage-PostOSConfig.txt", 1
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Select DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\MyProvisionedAppxPackage-PostOSConfig.txt"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
-		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\ProvisionedAppxPackage-PostOSConfig.txt -Append"
+		sCmd = "powershell Get-ProvisionedAppxPackage -Online | Sort DisplayName | Out-File -FilePath C:\Windows\OSConfig\Logs\MyProvisionedAppxPackage-PostOSConfig.txt -Append"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
-		TraceLog "AppxPackages do not apply to this OS", 2
+		TraceLog "AppxPackages do not apply to this OS", 1
 	End If
 	TraceLog "Section Complete", 1
 End Sub
@@ -840,12 +883,12 @@ End Sub
 '==============================================================================================
 Sub OSConfigDefaultAppAssociationsPost
 	If MyOperatingSystem = "Windows 8" or MyOperatingSystem = "Windows 8.1" or MyOperatingSystem = "Windows 10" Then
-		TraceLog "Exporting Default App Associations at C:\Windows\OSConfig\Logs\AppAssoc-PostOSConfig.xml", 2
-		sCmd = "Dism /Online /Export-DefaultAppAssociations:C:\Windows\OSConfig\Logs\AppAssoc-PostOSConfig.xml"
+		TraceLog "Exporting Default App Associations at C:\Windows\OSConfig\Logs\MyAppAssoc-PostOSConfig.xml", 1
+		sCmd = "Dism /Online /Export-DefaultAppAssociations:C:\Windows\OSConfig\Logs\MyAppAssoc-PostOSConfig.xml"
 		TraceLog "Running Command: " & sCmd, 1
 		objShell.Run sCmd, 7, True
 	Else
-		TraceLog "Dism Export-DefaultAppAssociations does not apply to this OS", 2
+		TraceLog "Dism Export-DefaultAppAssociations does not apply to this OS", 1
 	End If
 	TraceLog "Section Complete", 1
 End Sub
@@ -1220,7 +1263,7 @@ End Function
 		Next
 		
 		If tempMyOperatingSystem = "Unknown" Then
-			TraceLog "Cannot determine OS by WMI",2
+			TraceLog "Cannot determine OS by WMI", 2
 			Exit Sub
 		Else
 			MyOperatingSystem = tempMyOperatingSystem
@@ -1277,12 +1320,12 @@ End Function
 
 			If MyOperatingSystem = "" or Unsupported = True Then
 				MyOperatingSystem = objItem.Caption
-				TraceLog "<Property> MyOperatingSystem = " & MyOperatingSystem,3
-				TraceLog MyOperatingSystem & " is not supported by this Script",3
+				TraceLog "<Property> MyOperatingSystem = " & MyOperatingSystem, 3
+				TraceLog MyOperatingSystem & " is not supported by this Script", 3
 				Wscript.Quit
 			Else
-				TraceLog "<Variable> MyOperatingSystem = " & MyOperatingSystem,2
-				TraceLog "<Variable> MyArchitecture = " & MyArchitecture,2
+				TraceLog "<Variable> MyOperatingSystem = " & MyOperatingSystem, 2
+				TraceLog "<Variable> MyArchitecture = " & MyArchitecture, 2
 			End If
 		Next
 	End Sub
@@ -1294,18 +1337,18 @@ End Function
 	Sub Elevation	
 		'If UAC was in the Arguments, we have already launched a second time for Elevation
 		If sArgumentUAC = True Then
-			TraceLog "Script is running under UAC, no need to relaunch Elevated",3
+			TraceLog "Script is running under UAC, no need to relaunch Elevated", 3
 			Exit Sub
 		End If
 		
 		'If running in the System Context, we do not need to Elevate
 		If IsSystem = True Then
-			TraceLog "Script is running under SYSTEM, no need to relaunch Elevated",3
+			TraceLog "Script is running under SYSTEM, no need to relaunch Elevated", 3
 			Exit Sub
 		End If
 		
 		If MyOperatingSystem = "Windows XP" Then
-			TraceLog "Running Windows XP, no need to relaunch Elevated",3
+			TraceLog "Running Windows XP, no need to relaunch Elevated", 3
 			Exit Sub
 		End If
 		

@@ -1,0 +1,20 @@
+<LayoutModificationTemplate
+    xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification"
+    xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout"
+    xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout"
+    Version="1">
+  <RequiredStartGroupsCollection>
+    <RequiredStartGroups>
+	  <AppendGroup Name="Office">
+		<!-- Row 1 -->
+			<!-- Outlook -->			<start:DesktopApplicationTile Size="2x2" Row="0" Column="0" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Outlook 2016.lnk" />
+			<!-- OneNote -->			<start:DesktopApplicationTile Size="2x2" Row="0" Column="2" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\OneNote 2016.lnk" />
+			<!-- Skype -->				<start:DesktopApplicationTile Size="2x2" Row="0" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Skype for Business 2016.lnk" />
+		<!-- Row 2 -->
+			<!-- Word -->				<start:DesktopApplicationTile Size="2x2" Row="2" Column="0" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk" />
+			<!-- Excel -->				<start:DesktopApplicationTile Size="2x2" Row="2" Column="2" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Excel 2016.lnk" />
+			<!-- PowerPoint -->			<start:DesktopApplicationTile Size="2x2" Row="2" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\PowerPoint 2016.lnk" />
+      </AppendGroup>
+    </RequiredStartGroups>
+  </RequiredStartGroupsCollection> 
+</LayoutModificationTemplate>
