@@ -19,8 +19,8 @@
 	Const Reference			=	"https://winpeguy.wordpress.com/"
 
 	Const Title 			=	"OSConfig"
-	Const Version 			=	20151208
-	Const VersionFull 		=	20151208.1
+	Const Version 			=	20151209
+	Const VersionFull 		=	20151209.1
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -32,6 +32,7 @@
 	Const SupportProblem	=	"Complete Description of Problem Including All Logs"
 	
 '============================================================================================== VERSIONS
+'	20151209	Added CMTrace Logging if added to OEM Folders
 '	20151204	Theme: AddedOEMLogo.bmp support
 '				Theme: Removed Logon Background Image if Lock Screen Image exists
 '	20151203	Updated sorting for Appx Package Exports
@@ -185,6 +186,9 @@
 	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/01/tool-osconfig-oem-folders/", 1
 	OSConfigOEMFolders
 
+	TraceLog "============================================================= Launching Log with CMTrace", 2
+	OSConfigCMTraceLog
+
 	TraceLog "============================================================= Mounting Default User Hive", 2
 	OSConfigMountDefaultUser
 	
@@ -205,6 +209,7 @@
 	
 	TraceLog "============================================================= Windows 10 Disable Consumer Experiences", 2
 	TraceLog "Reference: https://winpeguy.wordpress.com/2015/12/06/win10-start-menu-junk-and-candy-crush-soda-saga/", 1
+	TraceLog "Reference: http://blogs.technet.com/b/mniehaus/archive/2015/11/23/seeing-extra-apps-turn-them-off.aspx", 1
 	OSConfigConsumerExperiences
 
 	TraceLog "============================================================= Processing Theme Files", 2
@@ -390,6 +395,32 @@ Sub OSConfigOEMFolders
 	sCmd = "attrib C:\ProgramData +H"
 	objShell.Run sCmd, 7, True
 	
+	TraceLog "Section Complete", 1
+End Sub
+'==============================================================================================
+'==============================================================================================
+Sub OSConfigCMTraceLog
+	If objFSO.FileExists(MyWindir & "\System32\CMTrace.exe") and objFSO.FileExists("C:\_SMSTaskSequence\OSConfig\OSConfig.cmd") Then
+		sCmd = "reg add HKCU\Software\Microsoft\Trace32 /v ""Register File Types"" /d 1 /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+		
+		sCmd = "reg add HKCU\Software\Classes\.log /ve /d ""Log.File"" /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+		
+		sCmd = "reg add HKCU\Software\Classes\.lo_ /ve /d ""Log.File"" /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+		
+		sCmd = "reg add HKCU\Software\Classes\Log.File\shell\open\command /ve /d ""\""C:\Windows\System32\CMTrace.exe\"" \""%1"""" /f"
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 7, True
+		
+		sCmd = "CMTrace.exe " & MyLogFile
+		TraceLog "Running Command: " & sCmd, 1
+		objShell.Run sCmd, 2, False
+	End If
 	TraceLog "Section Complete", 1
 End Sub
 '==============================================================================================

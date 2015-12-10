@@ -3,56 +3,69 @@
     xmlns="http://schemas.microsoft.com/Start/2014/FullDefaultLayout"
     xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout"
     Version="1">
-	<StartLayoutCollection>
+    <StartLayoutCollection>
+		<!-- US and CEFIGS specific 6 cell wide Desktop layout with Preinstalled apps -->
+		<!-- US and CEFIGS specific N-SKU 6 cell wide Desktop layout with Preinstalled apps -->
+		<!-- US and CEFIGS specific 6 cell wide Desktop layout with No Preinstalled apps -->
+        <!-- 6 cell wide Desktop layout with Preinstalled apps and no Cortana -->
+		<!-- 6 cell wide Desktop layout N-SKU with Preinstalled apps and no Cortana -->
 		<!-- 6 cell wide Desktop layout with no Preinstalled apps and no Cortana-->
 		<StartLayout
-            GroupCellWidth="6"
+			GroupCellWidth="6"
             PreInstalledAppsEnabled="false">
 			<start:Group Name="Windows">
 			<!-- Row 1 -->
-				<!-- This PC -->			<start:DesktopApplicationTile Size="2x2" Row="0" Column="0" DesktopApplicationID="Microsoft.Windows.Computer" />
-				<!-- File Explorer -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="2" DesktopApplicationID="Microsoft.Windows.Explorer" />
-				<!-- Control Panel -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="0" DesktopApplicationID="Microsoft.Windows.ControlPanel" />
-			<!-- Row 2 -->
-				<!-- Settings -->			<start:Tile                   Size="2x2" Row="2" Column="2" AppUserModelID="windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel" />
-				<!-- Edge -->				<start:Tile                   Size="2x2" Row="4" Column="0" AppUserModelID="Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge" />
-				<!-- Internet Explorer -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="2" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Accessories\Internet Explorer.lnk" />
-			<!-- Row 3 -->
-				<!-- Run -->				<start:DesktopApplicationTile Size="2x2" Row="0" Column="4" DesktopApplicationID="Microsoft.Windows.Shell.RunDialog" />
-				<!-- Command Prompt -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Command Prompt.lnk" />
-				<!-- Software Center -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Microsoft System Center\Configuration Manager\Software Center.lnk" />
+				<!-- This PC -->
+				<start:DesktopApplicationTile 
+				Size="2x2" Row="0" Column="0" 
+				DesktopApplicationID="Microsoft.Windows.Computer" />
+				<!-- Control Panel -->
+				<start:DesktopApplicationTile 
+				Size="2x2" Row="0" Column="2" 
+				DesktopApplicationID="Microsoft.Windows.ControlPanel" />
+				<!-- Internet Explorer -->
+				<start:DesktopApplicationTile 
+				Size="2x2" Row="0" Column="4" 
+				DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Accessories\Internet Explorer.lnk" />
+			<!-- Row 2 = Column -->
+				<!-- Run -->
+				<start:DesktopApplicationTile 
+				Size="2x2" Row="2" Column="0" 
+				DesktopApplicationID="Microsoft.Windows.Shell.RunDialog" />
+				<!-- Command Prompt -->
+				<start:DesktopApplicationTile 
+				Size="2x2" Row="2" Column="2" 
+				DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Command Prompt.lnk" />
+				<!-- Software Center -->
+				<start:DesktopApplicationTile 
+				Size="2x2" Row="2" Column="4" 
+				DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Microsoft System Center\Configuration Manager\Software Center.lnk" />
 			</start:Group>
-		</StartLayout>
-
-		<!-- Server 6 cell wide without Cortana -->
+        </StartLayout>
+		<!-- Long Term Servicing Branch with Cortana -->
+		<!-- Long Term Servicing Branch without Cortana -->
 		<StartLayout
-            GroupCellWidth="6"
-            SKU="Server|ServerSolution">
-			<start:Group Name="Windows">
-			<!-- Row 1 -->
-				<!-- This PC -->			<start:DesktopApplicationTile Size="2x2" Row="0" Column="0" DesktopApplicationID="Microsoft.Windows.Computer" />
-				<!-- File Explorer -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="2" DesktopApplicationID="Microsoft.Windows.Explorer" />
-				<!-- Control Panel -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="0" DesktopApplicationID="Microsoft.Windows.ControlPanel" />
-			<!-- Row 2 -->
-				<!-- Settings -->			<start:Tile                   Size="2x2" Row="2" Column="2" AppUserModelID="windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel" />
-				<!-- Edge -->				<start:Tile                   Size="2x2" Row="4" Column="0" AppUserModelID="Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge" />
-				<!-- Internet Explorer -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="2" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Accessories\Internet Explorer.lnk" />
-			<!-- Row 3 -->
-				<!-- Run -->				<start:DesktopApplicationTile Size="2x2" Row="0" Column="4" DesktopApplicationID="Microsoft.Windows.Shell.RunDialog" />
-				<!-- Command Prompt -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Command Prompt.lnk" />
-				<!-- Software Center -->	<start:DesktopApplicationTile Size="2x2" Row="4" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Microsoft System Center\Configuration Manager\Software Center.lnk" />
-			</start:Group>
-			<start:Group Name="Server">
-			<!-- Row 1 -->
-				<!-- Server Manager -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="0" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\Server Manager.lnk" />
-				<!-- Admin Tools -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="2" DesktopApplicationLinkPath="%APPDATA%\Microsoft\Windows\Start Menu\Programs\System Tools\Administrative Tools.lnk" />
-				<!-- Task Manager -->		<start:DesktopApplicationTile Size="2x2" Row="0" Column="4" DesktopApplicationLinkPath="%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\System Tools\Task Manager.lnk" />
-			<!-- Row 2 -->
-				<!-- PowerShell -->			<start:DesktopApplicationTile Size="2x2" Row="2" Column="0" DesktopApplicationLinkPath="%APPDATA%\Microsoft\Windows\Start Menu\Programs\Windows PowerShell\Windows PowerShell.lnk" />
-				<!-- PowerShell ISE -->		<start:DesktopApplicationTile Size="2x2" Row="2" Column="2" DesktopApplicationLinkPath="%APPDATA%\Microsoft\Windows\Start Menu\Programs\Windows PowerShell\Windows PowerShell ISE.lnk" />
-			</start:Group>
-		</StartLayout>
-	</StartLayoutCollection>
+          GroupCellWidth="6"
+          SKU="LongTermServicingBranch">
+        <start:Group>
+          <start:Tile
+              AppUserModelID="Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge"
+              Size="2x2"
+              Row="0"
+              Column="0"/>
+          <start:Tile
+              AppUserModelID="Windows.ContactSupport_cw5n1h2txyewy!App"
+              Size="2x2"
+              Row="0"
+              Column="2"/>
+          <start:Tile
+              AppUserModelID="Microsoft.WindowsFeedback_cw5n1h2txyewy!App"
+              Size="2x2"
+              Row="0"
+              Column="4"/>
+        </start:Group>
+      </StartLayout>
+    </StartLayoutCollection>
 </FullDefaultLayoutTemplate>
 
 <!-- Reference
@@ -83,7 +96,4 @@
 	http://ccmexec.com/2015/09/customizing-the-windows-10-start-menu-and-add-ie-shortcut-during-osd/
 	
 -->
-	
-	
-	
-	
+<!-- David Segura -->
