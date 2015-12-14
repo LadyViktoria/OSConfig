@@ -8,7 +8,7 @@
 ' // 
 ' // Author:    	David Segura
 ' // 
-' // Version:   	20151202
+' // Version:   	20151210
 ' // 
 ' // Purpose:   	Updates the OS Configuration for Windows Deployments
 ' //
@@ -18,6 +18,7 @@
 
 ' // ***************************************************************************
 ' // 
+' // 20151210	Added alternate locations for OSConfig
 ' // 20151130	Initial Release
 ' // 20151202	Added Robocopy exclusion for .gitignore
 ' // 
@@ -42,7 +43,11 @@
 ' //		Command Line:	cscript %ScriptRoot%\ZTIOSConfig.wsf
 ' //		Start In:		%ScriptRoot%
 ' //
-' //	OSConfig (ConfigFiles) should exist at %DeployRoot%\Applications\OSConfig
+' //	OSConfig Directory can be placed in any of the following locations:
+' //	%DeployRoot%\OSConfig
+' //	%DeployRoot%\Applications\OSConfig
+' //	%DeployRoot%\Control\OSConfig
+' //	%DeployRoot%\Scripts\OSConfig
 ' // 
 ' // ***************************************************************************
 
@@ -131,6 +136,21 @@ Class ZTIOSConfig
 		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\Applications\OSConfig") Then
 			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & oEnvironment.Item("DeployRoot") & "\Applications\OSConfig", LogTypeInfo
 			oEnvironment.Item("OSConfig") = oEnvironment.Item("DeployRoot") & "\Applications\OSConfig"
+			
+		'If we did not find it in the Script Directory, look in Control\OSConfig
+		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\Control\OSConfig") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & oEnvironment.Item("DeployRoot") & "\Control\OSConfig", LogTypeInfo
+			oEnvironment.Item("OSConfig") = oEnvironment.Item("DeployRoot") & "\Control\OSConfig"
+			
+		'If we did not find it in the Script Directory, look in Scripts\OSConfig
+		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\Scripts\OSConfig") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & oEnvironment.Item("DeployRoot") & "\Scripts\OSConfig", LogTypeInfo
+			oEnvironment.Item("OSConfig") = oEnvironment.Item("DeployRoot") & "\Scripts\OSConfig"
+			
+		'If we did not find it in the Script Directory, look in OSConfig
+		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\OSConfig") Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & oEnvironment.Item("DeployRoot") & "\OSConfig", LogTypeInfo
+			oEnvironment.Item("OSConfig") = oEnvironment.Item("DeployRoot") & "\OSConfig"
 		
 		'Cound not find the directory, script will exit
 		Else
