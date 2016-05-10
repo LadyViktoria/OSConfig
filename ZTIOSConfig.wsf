@@ -8,7 +8,7 @@
 ' // 
 ' // Author:    	David Segura
 ' // 
-' // Version:   	20151210
+' // Version:   	20160121
 ' // 
 ' // Purpose:   	Updates the OS Configuration for Windows Deployments
 ' //
@@ -141,6 +141,11 @@ Class ZTIOSConfig
 		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\Control\OSConfig") Then
 			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & oEnvironment.Item("DeployRoot") & "\Control\OSConfig", LogTypeInfo
 			oEnvironment.Item("OSConfig") = oEnvironment.Item("DeployRoot") & "\Control\OSConfig"
+			
+		'If we did not find it in the Script Directory, look in Control\TaskSequenceID\OSConfig
+		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\Control\" & oEnvironment.Item("TaskSequenceID")) Then
+			oLogging.CreateEntry "(" & ZTIAuthor & ") OSConfig located at " & oEnvironment.Item("DeployRoot") & "\Control\" & oEnvironment.Item("TaskSequenceID"), LogTypeInfo
+			oEnvironment.Item("OSConfig") = oEnvironment.Item("DeployRoot") & "\Control\" & oEnvironment.Item("TaskSequenceID")
 			
 		'If we did not find it in the Script Directory, look in Scripts\OSConfig
 		ElseIf oFSO.FolderExists(oEnvironment.Item("DeployRoot") & "\Scripts\OSConfig") Then

@@ -19,8 +19,8 @@
 	Const Reference			=	"https://winpeguy.wordpress.com/"
 
 	Const Title 			=	"OSConfig"
-	Const Version 			=	20151209
-	Const VersionFull 		=	20151209.1
+	Const Version 			=	20151217
+	Const VersionFull 		=	20151217.1
 	Dim TitleVersion		:	TitleVersion = Title & " (" & Version & ")"
 	
 	Const SupportContact	=	"David Segura"
@@ -32,6 +32,7 @@
 	Const SupportProblem	=	"Complete Description of Problem Including All Logs"
 	
 '============================================================================================== VERSIONS
+'	20151217	Corrected UAC Pictures
 '	20151209	Added CMTrace Logging if added to OEM Folders
 '	20151204	Theme: AddedOEMLogo.bmp support
 '				Theme: Removed Logon Background Image if Lock Screen Image exists
@@ -695,7 +696,7 @@ Sub OSConfigTheme
 	TraceLog "Copy " & MyWindir & "\OSConfig\Theme\User Account Pictures to " & MySystemDrive & "\ProgramData\Microsoft\User Account Pictures", 1
 	If objFSO.FolderExists(MyWindir & "\OSConfig\Theme\User Account Pictures") Then
 		TraceLog "Folder was located and will be copied", 1
-		objFSO.CopyFolder MyWindir & "\OSConfig\Theme\User Account Pictures", MySystemDrive & "\ProgramData\Microsoft", True
+		objFSO.CopyFolder MyWindir & "\OSConfig\Theme\User Account Pictures", MySystemDrive & "\ProgramData\Microsoft\User Account Pictures", True
 	Else
 		TraceLog "Folder was NOT located.  No actions taken.", 1
 	End If
